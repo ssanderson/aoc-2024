@@ -1,0 +1,20 @@
+use std::str::FromStr;
+use lalrpop_util::ParseError;
+use crate::input::{Line, Input};
+
+grammar;
+
+pub Input: Input = {
+  <v:Line*> => Input(v)
+}
+
+Line: Line = {
+    <a:Num> <b:Num> => Line(a, b),
+}
+
+Num: i32 = {
+    r"[0-9]+" =>? i32::from_str(<>)
+        .map_err(|_| ParseError::User {
+            error: "number is too big"
+        })
+}

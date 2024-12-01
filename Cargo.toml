@@ -1,0 +1,16 @@
+[workspace]
+members = [
+    "p1",
+    "common",
+]
+resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1.0.75"
+regex = "1.10.2"
+lalrpop-util = {version = "0.22.0", features = ["lexer"]}
+
+[wworkspace.package]
+version = "0.1.0"
+authors = ["Scott Sanderson"]
+edition = "2021"
