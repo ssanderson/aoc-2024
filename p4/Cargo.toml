@@ -1,0 +1,8 @@
+[package]
+name = "p4"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
