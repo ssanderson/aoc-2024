@@ -1,0 +1,9 @@
+[package]
+name = "p3"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+regex.workspace = true
