@@ -1,9 +1,8 @@
 [package]
-name = "p4"
+name = "common"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
 
 [dependencies]
 anyhow.workspace = true
-common = { version = "0.1.0", path = "../common" }
