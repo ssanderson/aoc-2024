@@ -52,15 +52,19 @@ impl<T> Grid<T> {
         })
     }
 
-    pub fn at(&self, Coord(x, y): Coord) -> Option<&T> {
-        if x < 0 || (x as usize) >= self.w || y < 0 || (y as usize) >= self.h {
+    pub fn in_bounds(&self, Coord(x, y): Coord) -> bool {
+        x >= 0 && (x as usize) < self.w && y >= 0 && (y as usize) < self.h
+    }
+
+    pub fn at(&self, c @ Coord(x, y): Coord) -> Option<&T> {
+        if !self.in_bounds(c) {
             return None;
         }
         Some(&self.cells[x as usize + y as usize * self.w])
     }
 
-    pub fn at_mut(&mut self, Coord(x, y): Coord) -> Option<&mut T> {
-        if x < 0 || (x as usize) >= self.w || y < 0 || (y as usize) >= self.h {
+    pub fn at_mut(&mut self, c @ Coord(x, y): Coord) -> Option<&mut T> {
+        if !self.in_bounds(c) {
             return None;
         }
         Some(&mut self.cells[x as usize + y as usize * self.w])
@@ -98,20 +102,47 @@ where
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Coord(pub i32, pub i32);
 
-impl Coord {
-    pub fn offset(self, delta: Delta) -> Self {
-        Self(self.0 + delta.0, self.1 + delta.1)
+impl std::ops::Add<Delta> for Coord {
+    type Output = Coord;
+
+    fn add(self, rhs: Delta) -> Self::Output {
+        Self(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
+
+impl std::ops::Sub<Delta> for Coord {
+    type Output = Coord;
+
+    fn sub(self, rhs: Delta) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
+impl std::ops::Sub<Coord> for Coord {
+    type Output = Delta;
+
+    fn sub(self, rhs: Coord) -> Self::Output {
+        Delta(rhs.0 - self.0, rhs.1 - self.1)
     }
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Delta(pub i32, pub i32);
+impl std::ops::Mul<i32> for Delta {
+    type Output = Self;
+    fn mul(self, rhs: i32) -> Self::Output {
+        Self(self.0 * rhs, self.1 * rhs)
+    }
+}
+
+impl std::ops::Neg for Delta {
+    type Output = Self;
+    fn neg(self) -> Self::Output {
+        self * -1
+    }
+}
 
 impl Delta {
-    pub fn invert(self) -> Self {
-        Self(-self.0, -self.1)
-    }
-
     pub fn directions() -> impl Iterator<Item = Self> {
         const ALL: [Delta; 8] = [
             Delta(-1, -1),
